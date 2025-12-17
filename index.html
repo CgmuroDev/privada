@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Una pregunta para ti</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #0a0c0f;
+      --bg-card: #111418;
+      --gold: #c9a227;
+      --gold-light: #e8d48b;
+      --gold-dark: #8b6914;
+      --text: #d4cfc4;
+      --text-muted: rgba(212, 207, 196, 0.6);
+      --border: rgba(201, 162, 39, 0.25);
+      --glow: rgba(201, 162, 39, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'EB Garamond', Georgia, serif;
+      background: var(--bg-dark);
+      background-image:
+        radial-gradient(ellipse 1200px 800px at 50% 0%, rgba(201, 162, 39, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 800px 600px at 50% 100%, rgba(201, 162, 39, 0.05) 0%, transparent 50%);
+      min-height: 100vh;
+      color: var(--text);
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    /* Dragon silhouettes */
+    .dragon {
+      position: fixed;
+      width: 320px;
+      height: 400px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      opacity: 0.04;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .dragon.left {
+      left: -60px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 150'%3E%3Cpath d='M20 75 Q30 40 50 30 Q70 20 80 40 Q90 60 85 80 Q80 100 60 120 Q40 140 20 130 Q10 120 15 100 Q18 85 20 75Z' fill='%23c9a227'/%3E%3Cpath d='M50 30 Q55 15 70 10 Q80 8 85 15' stroke='%23c9a227' fill='none' stroke-width='3'/%3E%3Cpath d='M80 40 Q95 35 100 45' stroke='%23c9a227' fill='none' stroke-width='2'/%3E%3C/svg%3E");
+    }
+
+    .dragon.right {
+      right: -60px;
+      top: 50%;
+      transform: translateY(-50%) scaleX(-1);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 150'%3E%3Cpath d='M20 75 Q30 40 50 30 Q70 20 80 40 Q90 60 85 80 Q80 100 60 120 Q40 140 20 130 Q10 120 15 100 Q18 85 20 75Z' fill='%23c9a227'/%3E%3Cpath d='M50 30 Q55 15 70 10 Q80 8 85 15' stroke='%23c9a227' fill='none' stroke-width='3'/%3E%3Cpath d='M80 40 Q95 35 100 45' stroke='%23c9a227' fill='none' stroke-width='2'/%3E%3C/svg%3E");
+    }
+
+    .page {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      padding: 32px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card {
+      width: min(620px, 100%);
+      position: relative;
+      background: linear-gradient(180deg, rgba(17, 20, 24, 0.97) 0%, rgba(10, 12, 15, 0.98) 100%);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 48px 40px;
+      text-align: center;
+      box-shadow:
+        0 0 80px var(--glow),
+        0 25px 60px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(201, 162, 39, 0.1);
+    }
+
+    /* Corner ornaments */
+    .corner {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border-color: var(--gold);
+      border-style: solid;
+      opacity: 0.5;
+    }
+
+    .corner.tl {
+      top: 12px;
+      left: 12px;
+      border-width: 2px 0 0 2px;
+    }
+
+    .corner.tr {
+      top: 12px;
+      right: 12px;
+      border-width: 2px 2px 0 0;
+    }
+
+    .corner.bl {
+      bottom: 12px;
+      left: 12px;
+      border-width: 0 0 2px 2px;
+    }
+
+    .corner.br {
+      bottom: 12px;
+      right: 12px;
+      border-width: 0 2px 2px 0;
+    }
+
+    /* Dividers */
+    .divider {
+      width: 200px;
+      height: 20px;
+      margin: 0 auto 20px;
+      color: var(--gold);
+      opacity: 0.6;
+    }
+
+    .divider.small {
+      width: 120px;
+      height: 12px;
+      margin: 8px auto 16px;
+    }
+
+    .divider svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .tag {
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.7;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-family: 'Cinzel Decorative', 'Cinzel', Georgia, serif;
+      font-weight: 400;
+      font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+      letter-spacing: 0.08em;
+      color: var(--gold-light);
+      text-shadow:
+        0 0 40px rgba(201, 162, 39, 0.4),
+        0 2px 0 rgba(0, 0, 0, 0.3);
+      margin-bottom: 8px;
+    }
+
+    .sub {
+      font-size: 1.15rem;
+      line-height: 1.7;
+      color: var(--text);
+      max-width: 420px;
+      margin: 0 auto 28px;
+      font-style: italic;
+    }
+
+    .stage {
+      position: relative;
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin: 0 auto 20px;
+      padding: 16px 24px;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.5) 100%);
+      border: 1px solid rgba(201, 162, 39, 0.15);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .stage::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 300px 100px at 50% 0%, rgba(201, 162, 39, 0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .btn {
+      position: relative;
+      z-index: 1;
+      appearance: none;
+      border: 1px solid var(--gold);
+      background: transparent;
+      padding: 14px 32px;
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 200ms ease;
+      user-select: none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-yes {
+      background: linear-gradient(180deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: #0a0c0f;
+      border-color: var(--gold-light);
+      box-shadow:
+        0 0 20px rgba(201, 162, 39, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-yes:hover {
+      background: linear-gradient(180deg, var(--gold-light) 0%, var(--gold) 100%);
+      box-shadow:
+        0 0 30px rgba(201, 162, 39, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .btn-no {
+      color: var(--text-muted);
+      border-color: rgba(212, 207, 196, 0.3);
+    }
+
+    .btn-no:hover {
+      color: var(--text);
+      border-color: rgba(212, 207, 196, 0.5);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .result {
+      min-height: 1.5em;
+      font-family: 'Cinzel', Georgia, serif;
+      font-size: 1.2rem;
+      color: var(--gold-light);
+      text-shadow: 0 0 20px rgba(201, 162, 39, 0.5);
+      margin-bottom: 12px;
+    }
+
+    /* Success overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 24px;
+      z-index: 50;
+      background:
+        radial-gradient(ellipse 900px 520px at 50% 20%, rgba(201, 162, 39, 0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 700px 420px at 50% 90%, rgba(201, 162, 39, 0.10) 0%, transparent 58%),
+        rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(6px);
+    }
+
+    .overlay.is-open {
+      display: grid;
+    }
+
+    .confetti {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .overlay-panel {
+      width: min(860px, 100%);
+      border: 1px solid rgba(201, 162, 39, 0.28);
+      background: linear-gradient(180deg, rgba(17, 20, 24, 0.94) 0%, rgba(10, 12, 15, 0.98) 100%);
+      box-shadow:
+        0 0 110px rgba(201, 162, 39, 0.18),
+        0 30px 90px rgba(0, 0, 0, 0.65);
+      border-radius: 6px;
+      padding: 44px 28px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .overlay-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 420px 180px at 50% 0%, rgba(201, 162, 39, 0.16) 0%, transparent 70%),
+        linear-gradient(90deg, rgba(201, 162, 39, 0.0) 0%, rgba(201, 162, 39, 0.08) 50%, rgba(201, 162, 39, 0.0) 100%);
+      opacity: 0.7;
+      pointer-events: none;
+      animation: shimmer 2.4s ease-in-out infinite;
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateY(-8px); opacity: 0.55; }
+      50% { transform: translateY(0px); opacity: 0.85; }
+      100% { transform: translateY(-8px); opacity: 0.55; }
+    }
+
+    .overlay-title {
+      position: relative;
+      z-index: 1;
+      font-family: 'Cinzel Decorative', 'Cinzel', Georgia, serif;
+      font-weight: 700;
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      letter-spacing: 0.06em;
+      color: var(--gold-light);
+      text-shadow:
+        0 0 40px rgba(201, 162, 39, 0.45),
+        0 2px 0 rgba(0, 0, 0, 0.35);
+      margin-bottom: 26px;
+      animation: pop 520ms cubic-bezier(.2,.9,.2,1) both;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.92); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .overlay-panel::before,
+      .overlay-title {
+        animation: none;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .card {
+        padding: 36px 24px;
+      }
+
+      .corner {
+        width: 35px;
+        height: 35px;
+      }
+
+      h1 {
+        letter-spacing: 0.04em;
+      }
+
+      .stage {
+        height: 104px;
+        gap: 16px;
+      }
+
+      .btn {
+        padding: 12px 24px;
+        font-size: 0.9rem;
+      }
+
+      .overlay {
+        padding: 16px;
+      }
+
+      .overlay-panel {
+        padding: 34px 18px;
+      }
+
+      .dragon {
+        display: none;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .stage {
+        height: 154px;
+        gap: 12px;
+      }
+
+      .btn {
+        padding: 12px 18px;
+        letter-spacing: 0.08em;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .btn {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dragon left" aria-hidden="true"></div>
+  <div class="dragon right" aria-hidden="true"></div>
+
+  <main class="page">
+    <section class="card" aria-labelledby="titulo">
+      <div class="corner tl" aria-hidden="true"></div>
+      <div class="corner tr" aria-hidden="true"></div>
+      <div class="corner bl" aria-hidden="true"></div>
+      <div class="corner br" aria-hidden="true"></div>
+
+      <div class="divider" aria-hidden="true">
+        <svg viewBox="0 0 200 20" preserveAspectRatio="none">
+          <path d="M0 10 Q50 0, 100 10 T200 10" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+      </div>
+
+      <h1 id="titulo">¿Quieres ser mi novia?</h1>
+
+      <div class="divider small" aria-hidden="true">
+        <svg viewBox="0 0 120 12" preserveAspectRatio="none">
+          <path d="M0 6 L40 6 M80 6 L120 6" stroke="currentColor" stroke-width="1"/>
+          <circle cx="60" cy="6" r="4" fill="currentColor"/>
+        </svg>
+      </div>
+
+      <p id="sub" class="sub">
+        Entre montañas nevadas y aventuras épicas…<br>
+        ¿aceptas caminar conmigo por este mundo?
+      </p>
+
+      <div class="stage" aria-describedby="sub">
+        <button id="yesBtn" class="btn btn-yes" type="button">Sí, acepto</button>
+        <button id="noBtn" class="btn btn-no" type="button" aria-label="No">No</button>
+      </div>
+
+      <p id="result" class="result" role="status" aria-live="polite"></p>
+
+      <div class="divider" aria-hidden="true">
+        <svg viewBox="0 0 200 20" preserveAspectRatio="none">
+          <path d="M0 10 Q50 20, 100 10 T200 10" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+      </div>
+    </section>
+  </main>
+
+  <section id="successOverlay" class="overlay" aria-live="polite" aria-label="Celebración" hidden>
+    <canvas id="confetti" class="confetti" aria-hidden="true"></canvas>
+    <div class="overlay-panel">
+      <div id="overlayTitle" class="overlay-title">Papure pa pa pure 💃🎶</div>
+    </div>
+  </section>
+
+  <script>
+    const stage = document.querySelector('.stage');
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const result = document.getElementById('result');
+    const successOverlay = document.getElementById('successOverlay');
+    const overlayTitle = document.getElementById('overlayTitle');
+    const confettiCanvas = document.getElementById('confetti');
+
+    let noIsAbsolute = false;
+
+    const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let confettiRaf = 0;
+    let confettiParticles = [];
+    let confettiEndAt = 0;
+
+    function resizeConfettiCanvas() {
+      if (!confettiCanvas) return;
+      const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      const rect = successOverlay.getBoundingClientRect();
+      confettiCanvas.width = Math.floor(rect.width * dpr);
+      confettiCanvas.height = Math.floor(rect.height * dpr);
+      confettiCanvas.style.width = `${rect.width}px`;
+      confettiCanvas.style.height = `${rect.height}px`;
+
+      const ctx = confettiCanvas.getContext('2d');
+      if (ctx) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    function stopConfetti() {
+      if (confettiRaf) cancelAnimationFrame(confettiRaf);
+      confettiRaf = 0;
+      confettiParticles = [];
+      confettiEndAt = 0;
+      if (confettiCanvas) {
+        const ctx = confettiCanvas.getContext('2d');
+        if (ctx) ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      }
+    }
+
+    function startConfetti(durationMs = 2200) {
+      if (prefersReducedMotion) return;
+      if (!confettiCanvas) return;
+
+      stopConfetti();
+      resizeConfettiCanvas();
+
+      const rect = successOverlay.getBoundingClientRect();
+      const w = rect.width;
+      const h = rect.height;
+
+      const colors = ['#c9a227', '#e8d48b', '#8b6914', '#d4cfc4'];
+      const count = Math.round(Math.min(160, Math.max(80, (w * h) / 12000)));
+
+      const rand = (min, max) => min + Math.random() * (max - min);
+      confettiParticles = Array.from({ length: count }, () => {
+        const size = rand(5, 10);
+        return {
+          x: rand(0, w),
+          y: rand(-h * 0.2, -10),
+          vx: rand(-55, 55),
+          vy: rand(140, 320),
+          g: rand(420, 680),
+          size,
+          rot: rand(0, Math.PI * 2),
+          vr: rand(-8, 8),
+          color: colors[(Math.random() * colors.length) | 0],
+          shape: Math.random() < 0.25 ? 'ribbon' : 'rect',
+        };
+      });
+
+      const ctx = confettiCanvas.getContext('2d');
+      if (!ctx) return;
+
+      confettiEndAt = performance.now() + durationMs;
+      let last = performance.now();
+
+      function tick(now) {
+        const dt = Math.min(0.032, (now - last) / 1000);
+        last = now;
+
+        ctx.clearRect(0, 0, w, h);
+
+        for (const p of confettiParticles) {
+          p.vy += p.g * dt;
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.rot += p.vr * dt;
+
+          if (p.x < -30) p.x = w + 30;
+          if (p.x > w + 30) p.x = -30;
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = p.color;
+
+          if (p.shape === 'ribbon') {
+            ctx.globalAlpha = 0.95;
+            ctx.fillRect(-p.size * 0.25, -p.size * 1.2, p.size * 0.5, p.size * 2.4);
+          } else {
+            ctx.globalAlpha = 0.9;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          }
+
+          ctx.restore();
+        }
+
+        if (now < confettiEndAt) {
+          confettiRaf = requestAnimationFrame(tick);
+        } else {
+          stopConfetti();
+        }
+      }
+
+      confettiRaf = requestAnimationFrame(tick);
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function makeNoAbsoluteAtCurrentPosition() {
+      if (noIsAbsolute) return;
+
+      const stageRect = stage.getBoundingClientRect();
+      const noRect = noBtn.getBoundingClientRect();
+
+      const left = noRect.left - stageRect.left;
+      const top = noRect.top - stageRect.top;
+
+      noBtn.style.position = 'absolute';
+      noBtn.style.left = `${left}px`;
+      noBtn.style.top = `${top}px`;
+
+      noIsAbsolute = true;
+    }
+
+    function rectsOverlap(a, b) {
+      return !(
+        a.x + a.w <= b.x ||
+        b.x + b.w <= a.x ||
+        a.y + a.h <= b.y ||
+        b.y + b.h <= a.y
+      );
+    }
+
+    function expandRect(rect, amount) {
+      return {
+        x: rect.x - amount,
+        y: rect.y - amount,
+        w: rect.w + amount * 2,
+        h: rect.h + amount * 2,
+      };
+    }
+
+    function moveNoSomewhereElse() {
+      makeNoAbsoluteAtCurrentPosition();
+
+      const stageRect = stage.getBoundingClientRect();
+      const noRect = noBtn.getBoundingClientRect();
+      const yesRect = yesBtn.getBoundingClientRect();
+
+      const yesInStage = {
+        x: yesRect.left - stageRect.left,
+        y: yesRect.top - stageRect.top,
+        w: yesRect.width,
+        h: yesRect.height,
+      };
+      const avoidYes = expandRect(yesInStage, 12);
+
+      const padding = 8;
+      const maxLeft = Math.max(padding, stageRect.width - noRect.width - padding);
+      const maxTop = Math.max(padding, stageRect.height - noRect.height - padding);
+
+      function candidateAt(x, y) {
+        return { x, y, w: noRect.width, h: noRect.height };
+      }
+
+      let chosen = null;
+      for (let i = 0; i < 30; i++) {
+        const nextLeft = clamp(
+          Math.random() * (stageRect.width - noRect.width),
+          padding,
+          maxLeft
+        );
+        const nextTop = clamp(
+          Math.random() * (stageRect.height - noRect.height),
+          padding,
+          maxTop
+        );
+
+        const cand = candidateAt(nextLeft, nextTop);
+        if (!rectsOverlap(cand, avoidYes)) {
+          chosen = cand;
+          break;
+        }
+      }
+
+      if (!chosen) {
+        const corners = [
+          candidateAt(padding, padding),
+          candidateAt(maxLeft, padding),
+          candidateAt(padding, maxTop),
+          candidateAt(maxLeft, maxTop),
+        ];
+
+        const ok = corners.filter((c) => !rectsOverlap(c, avoidYes));
+        const candidates = ok.length ? ok : corners;
+
+        const yesCenter = {
+          x: yesInStage.x + yesInStage.w / 2,
+          y: yesInStage.y + yesInStage.h / 2,
+        };
+
+        chosen = candidates
+          .map((c) => {
+            const cx = c.x + c.w / 2;
+            const cy = c.y + c.h / 2;
+            const dx = cx - yesCenter.x;
+            const dy = cy - yesCenter.y;
+            return { c, score: dx * dx + dy * dy };
+          })
+          .sort((a, b) => b.score - a.score)[0].c;
+      }
+
+      noBtn.style.left = `${chosen.x}px`;
+      noBtn.style.top = `${chosen.y}px`;
+    }
+
+    ['pointerenter', 'mouseover', 'touchstart'].forEach((evt) => {
+      noBtn.addEventListener(evt, (e) => {
+        if (evt === 'touchstart') e.preventDefault();
+        moveNoSomewhereElse();
+      }, { passive: false });
+    });
+
+    noBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      moveNoSomewhereElse();
+    });
+
+    yesBtn.addEventListener('click', () => {
+      const msg = 'Papure pa pa pure 💃🎶';
+      result.textContent = msg;
+      overlayTitle.textContent = msg;
+
+      successOverlay.hidden = false;
+      successOverlay.classList.add('is-open');
+      document.body.style.overflow = 'hidden';
+
+      startConfetti();
+
+      yesBtn.disabled = true;
+      noBtn.disabled = true;
+      yesBtn.style.cursor = 'default';
+      noBtn.style.cursor = 'default';
+    });
+
+    window.addEventListener('resize', () => {
+      if (!noIsAbsolute) return;
+      moveNoSomewhereElse();
+    });
+
+    window.addEventListener('resize', () => {
+      if (successOverlay.hidden) return;
+      resizeConfettiCanvas();
+    });
+  </script>
+</body>
+</html>
