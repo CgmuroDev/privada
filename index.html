@@ -3,471 +3,461 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <title>Una pregunta para ti</title>
+  <title>Misión Activa: Propuesta</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@400;600;800&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --bg-dark: #0a0c0f;
-      --bg-card: #111418;
-      --gold: #c9a227;
-      --gold-light: #e8d48b;
-      --gold-dark: #8b6914;
-      --text: #d4cfc4;
-      --text-muted: rgba(212, 207, 196, 0.6);
-      --border: rgba(201, 162, 39, 0.25);
-      --glow: rgba(201, 162, 39, 0.15);
+      /* Skyrim Palette */
+      --bg-void: #050505;
+      --bg-menu: rgba(20, 20, 20, 0.95);
+      --skyrim-gold: #c8aa6e;
+      --skyrim-gold-dim: #79663f;
+      --skyrim-white: #dcdcdc;
+      --skyrim-grey: #999;
+      --quest-green: #11ff11; /* Color de misión completada clásico */
+      --heart-red: #aa2222;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'EB Garamond', Georgia, serif;
-      background: var(--bg-dark);
+      font-family: 'Cinzel', serif;
+      background-color: var(--bg-void);
+      background-image: 
+        radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 100%);
       min-height: 100vh;
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      align-items: center; /* Centrado vertical */
-      overflow-x: hidden;
-      position: relative;
-    }
-
-    /* Fondo animado sutil */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      background:
-        radial-gradient(ellipse 1000px 520px at 20% 15%, rgba(201, 162, 39, 0.07) 0%, transparent 60%),
-        radial-gradient(ellipse 900px 480px at 80% 85%, rgba(201, 162, 39, 0.05) 0%, transparent 62%);
-      opacity: 0.9;
-    }
-
-    /* Animación de Flores Rojas */
-    .rose-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0; /* Detrás de la tarjeta */
-      overflow: hidden;
-    }
-
-    .rose {
-      position: absolute;
-      top: -50px;
-      font-size: 24px;
-      opacity: 0.8;
-      animation: fall linear forwards;
-      filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.3));
-    }
-
-    @keyframes fall {
-      0% { transform: translateY(-50px) rotate(0deg) translateX(0px); opacity: 0; }
-      10% { opacity: 1; }
-      100% { transform: translateY(110vh) rotate(360deg) translateX(50px); opacity: 0; }
-    }
-
-    .page {
-      width: 100%;
-      display: grid;
-      place-items: center;
-      padding: 20px;
-      position: relative;
-      z-index: 2;
-    }
-
-    .card {
-      width: min(620px, 100%);
-      position: relative;
-      background: linear-gradient(180deg, rgba(17, 20, 24, 0.97) 0%, rgba(10, 12, 15, 0.98) 100%);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 40px 30px; /* Padding reducido arriba */
-      text-align: center;
-      box-shadow:
-        0 0 80px var(--glow),
-        0 25px 60px rgba(0, 0, 0, 0.5);
-      animation: border-pulse 4.8s ease-in-out infinite;
-    }
-
-    @keyframes border-pulse {
-      0%, 100% { box-shadow: 0 0 80px var(--glow); }
-      50% { box-shadow: 0 0 95px rgba(201, 162, 39, 0.20); }
-    }
-
-    /* Patrón de fondo dentro de la tarjeta */
-    .card::before {
-      content: '';
-      position: absolute;
-      inset: 12px;
-      z-index: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M20 20 L25 25 M20 20 L15 25' stroke='%23c9a227' stroke-opacity='0.1'/%3E%3C/svg%3E");
-      opacity: 0.4;
-      pointer-events: none;
-    }
-
-    /* Solo dejamos las esquinas inferiores para limpiar la parte de arriba */
-    .corner {
-      position: absolute;
-      width: 40px;
-      height: 40px;
-      border-color: var(--gold);
-      border-style: solid;
-      opacity: 0.5;
-      z-index: 2;
-    }
-    .corner.bl { bottom: 12px; left: 12px; border-width: 0 0 2px 2px; }
-    .corner.br { bottom: 12px; right: 12px; border-width: 0 2px 2px 0; }
-
-    .divider {
-      width: 120px;
-      height: 12px;
-      margin: 8px auto 24px;
-      color: var(--gold);
-    }
-
-    .tag {
-      font-family: 'Cinzel', Georgia, serif;
-      font-size: 0.85rem;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--gold);
-      opacity: 0.8;
-      margin-bottom: 20px;
-      margin-top: 10px;
-      display: block;
-    }
-
-    h1 {
-      font-family: 'Cinzel Decorative', serif;
-      font-weight: 400;
-      font-size: clamp(1.8rem, 5vw, 2.8rem);
-      color: var(--gold-light);
-      text-shadow: 0 0 20px rgba(201, 162, 39, 0.4);
-      margin-bottom: 12px;
-      line-height: 1.2;
-    }
-
-    .sub {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      color: var(--text);
-      margin: 0 auto 32px;
-      font-style: italic;
-      max-width: 90%;
-    }
-
-    /* Stage: Contenedor de botones */
-    .stage {
-      position: relative;
-      /* Altura fija suficiente para moverse */
-      height: 180px; 
-      width: 100%;
-      max-width: 400px;
-      margin: 0 auto 20px;
-      border-radius: 4px;
-      /* Flex para centrar el botón SÍ inicialmente */
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 20px;
+      overflow: hidden;
+      color: var(--skyrim-white);
+      user-select: none;
+    }
+
+    /* Fondo de niebla animada */
+    .fog {
+      position: absolute;
+      top: 0; left: 0; width: 200%; height: 100%;
+      background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png') repeat-x;
+      background-size: contain;
+      animation: fogAnim 60s linear infinite;
+      opacity: 0.3;
+      z-index: 0;
+      pointer-events: none;
+    }
+    @keyframes fogAnim { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
+
+    /* Partículas de Corazones (Nieve romántica) */
+    .particle-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .heart-particle {
+      position: absolute;
+      color: var(--heart-red);
+      opacity: 0.7;
+      animation: floatDown linear forwards;
+      filter: drop-shadow(0 0 5px rgba(200, 50, 50, 0.5));
+    }
+    @keyframes floatDown {
+      to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Contenedor Principal estilo UI Skyrim */
+    .quest-card {
+      position: relative;
+      z-index: 10;
+      width: 90%;
+      max-width: 600px;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    /* Misión Iniciada HUD */
+    .quest-header {
+      margin-bottom: 30px;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .quest-marker {
+      font-size: 2rem;
+      color: var(--skyrim-white);
+      text-shadow: 0 0 10px var(--skyrim-white);
+      animation: pulseMarker 2s infinite;
+      margin-bottom: 5px;
+    }
+    @keyframes pulseMarker {
+      0% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); opacity: 0.8; }
+    }
+
+    .quest-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+      color: var(--skyrim-gold);
+      border-bottom: 2px solid var(--skyrim-gold-dim);
+      padding-bottom: 5px;
+      display: inline-block;
+      text-transform: uppercase;
+    }
+
+    /* Texto principal */
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 400;
+      margin: 20px 0;
+      text-shadow: 2px 2px 0px #000;
+    }
+
+    .dialogue-text {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--skyrim-grey);
+      font-style: italic;
+      margin-bottom: 40px;
+      line-height: 1.5;
+    }
+
+    /* Opciones de Diálogo */
+    .dialogue-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      position: relative;
+      min-height: 150px; /* Espacio para que el NO se mueva */
     }
 
     .btn {
-      position: relative;
-      z-index: 10;
-      appearance: none;
-      border: 1px solid var(--gold);
       background: transparent;
-      padding: 14px 28px;
+      border: none;
+      color: var(--skyrim-grey);
       font-family: 'Cinzel', serif;
-      font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
+      font-size: 1.4rem;
       cursor: pointer;
-      transition: all 0.2s ease;
-      -webkit-tap-highlight-color: transparent;
-      white-space: nowrap;
+      position: relative;
+      padding: 10px 40px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-shadow: 1px 1px 2px #000;
     }
 
-    .btn-yes {
-      background: linear-gradient(180deg, var(--gold) 0%, var(--gold-dark) 100%);
-      color: #0a0c0f;
-      box-shadow: 0 0 20px rgba(201, 162, 39, 0.3);
-      /* El botón SÍ se queda en flujo normal para mantener el centro */
+    /* Estilo de selección Skyrim */
+    .btn::before {
+      content: '◆';
+      color: transparent;
+      font-size: 0.8em;
+      margin-right: 10px;
+      transition: color 0.2s;
     }
 
-    .btn-yes:hover {
+    .btn:hover, .btn:active {
+      color: var(--skyrim-gold);
       transform: scale(1.05);
-      box-shadow: 0 0 30px rgba(201, 162, 39, 0.6);
+    }
+    
+    .btn:hover::before {
+      color: var(--skyrim-gold);
     }
 
+    /* Botón SÍ (Persuasión) */
+    .btn-yes {
+      font-weight: 700;
+      z-index: 50; /* Siempre encima */
+    }
+
+    /* Botón NO (Escurridizo) */
     .btn-no {
-      color: var(--text-muted);
-      border-color: rgba(212, 207, 196, 0.3);
-      background: rgba(0,0,0,0.4);
-      /* El botón NO será absoluto en cuanto se mueva */
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+    .btn-no.moving {
+      position: absolute;
     }
 
-    .hint {
+    /* Notificaciones Meme */
+    .skill-check {
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
       font-size: 0.9rem;
-      color: var(--gold);
-      opacity: 0.7;
-      min-height: 1.5em;
-      margin-top: 10px;
+      color: #ff4444;
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+      font-family: 'Cinzel', serif;
+    }
+    .skill-check.visible {
+      animation: floatUpFade 1.5s forwards;
+    }
+    @keyframes floatUpFade {
+      0% { opacity: 1; top: -30px; }
+      100% { opacity: 0; top: -60px; }
     }
 
-    /* Media Queries para Móviles */
-    @media (max-width: 500px) {
-      .card {
-        padding: 30px 16px;
-        margin-top: -20px; /* Subir visualmente en móvil */
-      }
-      
-      h1 {
-        font-size: 1.8rem;
-      }
-
-      .sub {
-        font-size: 1rem;
-      }
-
-      .stage {
-        height: 250px; /* MÁS ALTO en móvil para dar espacio al botón de escapar */
-        flex-direction: column; /* Apilar verticalmente al inicio */
-        justify-content: center;
-        gap: 25px;
-      }
-
-      /* Ajuste inicial para que no se encimen */
-      .btn {
-        width: 80%; /* Botones más anchos para tocar fácil */
-        max-width: 200px;
-      }
-      
-      /* Cuando el NO se vuelve absoluto, le quitamos el ancho fijo */
-      .btn-no[style*="position: absolute"] {
-        width: auto;
-        padding: 10px 20px;
-        font-size: 0.8rem;
-      }
-    }
-
-    /* Overlay de éxito */
-    .overlay {
+    /* LEVEL UP OVERLAY */
+    .level-up-overlay {
       position: fixed;
       inset: 0;
-      display: none;
-      place-items: center;
-      background: rgba(0, 0, 0, 0.9);
+      background: rgba(0,0,0,0.95);
       z-index: 100;
-      backdrop-filter: blur(5px);
-    }
-    
-    .overlay.is-open { display: grid; }
-    
-    .overlay-content {
-      text-align: center;
-      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease;
     }
 
-    @keyframes popIn {
-      from { transform: scale(0.8); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+    .level-up-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
     }
 
-    .overlay h2 {
+    .level-up-bar {
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--skyrim-gold), transparent);
+      margin: 20px 0;
+      transform: scaleX(0);
+      transition: transform 1s 0.5s ease-out;
+    }
+    .level-up-overlay.visible .level-up-bar {
+      transform: scaleX(1);
+    }
+
+    .level-up-text {
       font-family: 'Cinzel Decorative', serif;
-      color: var(--gold);
-      font-size: 2rem;
+      font-size: 4rem;
+      color: var(--skyrim-gold);
+      text-transform: uppercase;
       margin-bottom: 10px;
+      letter-spacing: 5px;
+      transform: scale(0.8);
+      opacity: 0;
+      transition: all 0.5s 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .level-up-overlay.visible .level-up-text {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    .skill-text {
+      font-size: 1.5rem;
+      color: var(--skyrim-white);
+      margin-top: 20px;
     }
     
-    .overlay p {
-      font-size: 1.2rem;
+    .couple-emoji {
+      font-size: 5rem;
+      margin: 30px 0;
+      filter: drop-shadow(0 0 20px var(--skyrim-gold));
+    }
+
+    /* Botón WA final */
+    .wa-btn {
+      margin-top: 30px;
+      background: linear-gradient(to bottom, #1a4a1a, #0d260d);
+      border: 1px solid #4a8a4a;
+      color: #fff;
+      padding: 15px 30px;
+      font-family: 'Cinzel', serif;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      transition: all 0.3s;
+      box-shadow: 0 0 15px rgba(20, 255, 20, 0.2);
+    }
+    .wa-btn:hover {
+      background: linear-gradient(to bottom, #266e26, #133a13);
+      box-shadow: 0 0 25px rgba(20, 255, 20, 0.5);
+    }
+
+    /* Móvil adjustments */
+    @media (max-width: 500px) {
+      .quest-card { width: 100%; padding: 20px 10px; }
+      h1 { font-size: 2.2rem; }
+      .dialogue-text { font-size: 1.1rem; }
+      .level-up-text { font-size: 2.5rem; }
+      .btn { font-size: 1.1rem; width: 100%; justify-content: flex-start; padding-left: 20%; }
+      .btn-no.moving { width: auto; padding: 10px 20px; justify-content: center; }
     }
 
   </style>
 </head>
 <body>
 
-  <div id="roseContainer" class="rose-container"></div>
+  <div class="fog"></div>
+  <div id="particleContainer" class="particle-container"></div>
 
-  <main class="page">
-    <section class="card">
-      <div class="corner bl"></div>
-      <div class="corner br"></div>
+  <main class="quest-card">
+    <!-- Marcador de Misión -->
+    <div class="quest-header">
+      <div class="quest-marker">◆</div>
+      <div class="quest-title">Misión Iniciada: Propuesta de Amor</div>
+    </div>
 
-      <div class="tag">Modo confesión: activado</div>
+    <h1>¿Quieres ser mi novia?</h1>
+    
+    <p class="dialogue-text">
+      Prometo risas, aventuras y protegerte de cualquier flecha en la rodilla.<br>
+      ¿Qué dices?
+    </p>
+
+    <div class="dialogue-box" id="dialogueBox">
+      <!-- Indicador de fallo "Sneak Failed" -->
+      <div id="skillCheck" class="skill-check">Sneak Failed!</div>
+
+      <button id="yesBtn" class="btn btn-yes">
+        [Persuadir] ¡Sí, acepto! ❤️
+      </button>
       
-      <h1>¿Quieres ser mi novia? 🥺</h1>
-
-      <div class="divider">
-        <svg viewBox="0 0 120 12" preserveAspectRatio="none">
-          <path d="M0 6 L40 6 M80 6 L120 6" stroke="currentColor" stroke-width="1"/>
-          <circle cx="60" cy="6" r="4" fill="currentColor"/>
-        </svg>
-      </div>
-
-      <p class="sub">
-        Prometo risas, abrazos y aventuras…<br>
-        ¿Te animas a ser mi compañera favorita?
-      </p>
-
-      <div class="stage" id="stage">
-        <button id="yesBtn" class="btn btn-yes" type="button">Sí, mi amor</button>
-        <button id="noBtn" class="btn btn-no" type="button">No</button>
-      </div>
-
-      <p id="memeLine" class="hint">“No” no es opción, es decoración ✨</p>
-    </section>
+      <button id="noBtn" class="btn btn-no">
+        No (Imposible)
+      </button>
+    </div>
   </main>
 
-  <div id="successOverlay" class="overlay">
-    <div class="overlay-content">
-      <h2>¡Sabía que dirías que sí! ❤️</h2>
-      <p>Papure pa pa pure 💃🎶</p>
-      <p style="margin-top:10px; font-size: 3rem;">🌹💑🌹</p>
-    </div>
+  <!-- PANTALLA DE LEVEL UP / ÉXITO -->
+  <div id="successOverlay" class="level-up-overlay">
+    <div class="level-up-bar"></div>
+    <div class="level-up-text">NIVEL SUBIDO</div>
+    <div class="level-up-bar"></div>
+    
+    <div class="skill-text">Relación aumentada a 100</div>
+    
+    <span class="couple-emoji">👩‍❤️‍👨</span>
+
+    <p style="color: #aaa; margin-bottom: 20px; font-style: italic;">
+      Misión Completada: "El inicio de nosotros"
+    </p>
+    
+    <!-- Enlace a WhatsApp -->
+    <a href="https://api.whatsapp.com/send?phone=529981204933&text=¡Dije%20que%20SÍ!%20%5BPersuadir%20Éxito%5D%20👩‍❤️‍👨%20¡Subimos%20de%20nivel!" class="wa-btn" target="_blank">
+      Confirmar Misión
+    </a>
   </div>
 
   <script>
-    const stage = document.getElementById('stage');
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
-    const memeLine = document.getElementById('memeLine');
+    const skillCheck = document.getElementById('skillCheck');
+    const dialogueBox = document.getElementById('dialogueBox');
     const overlay = document.getElementById('successOverlay');
-    
-    // Frases graciosas
-    const phrases = [
-      '“No” no es opción ✨',
-      '¡Uy! Se te resbaló el dedo 😉',
-      'Inténtalo de nuevo... con el otro botón ❤️',
-      'El destino dice que sí 🌹',
-      '¿Segura? Mira qué guapo soy 😎'
+    const particleContainer = document.getElementById('particleContainer');
+
+    // Referencias Meme Skyrim
+    const npcPhrases = [
+      "Must have been the wind...",
+      "¡Alto ahí, criminal!",
+      "I took an arrow in the knee...",
+      "Wait... I know you.",
+      "Sneak level too low!",
+      "Do you get to the Cloud District?",
+      "¡Por Skyrim!",
+      "Error: Speech 0",
+      "No lollygagging!"
     ];
 
-    // Lógica para generar rosas cayendo
-    function createRose() {
-      const container = document.getElementById('roseContainer');
-      const rose = document.createElement('div');
-      rose.classList.add('rose');
-      rose.innerHTML = Math.random() > 0.5 ? '🌹' : '🌺'; // Rosas y flores rojas
+    // --- SISTEMA DE PARTÍCULAS (CORAZONES) ---
+    function spawnHeart(isExplosion = false) {
+      const heart = document.createElement('div');
+      heart.classList.add('heart-particle');
+      heart.textContent = Math.random() > 0.8 ? '✨' : '❤️'; // Corazones y brillos
       
-      // Posición aleatoria horizontal
-      rose.style.left = Math.random() * 100 + 'vw';
+      // Posición aleatoria
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.top = isExplosion ? '50%' : '-50px';
       
-      // Duración aleatoria de caída
-      const duration = Math.random() * 3 + 3; // entre 3 y 6 segundos
-      rose.style.animationDuration = duration + 's';
+      // Tamaño variable
+      const size = Math.random() * 20 + 10;
+      heart.style.fontSize = size + 'px';
       
-      // Tamaño aleatorio
-      const size = Math.random() * 15 + 15; // entre 15px y 30px
-      rose.style.fontSize = size + 'px';
+      // Velocidad
+      const duration = Math.random() * 3 + 2;
+      heart.style.animationDuration = duration + 's';
 
-      container.appendChild(rose);
+      particleContainer.appendChild(heart);
 
-      // Eliminar después de la animación para no saturar memoria
-      setTimeout(() => {
-        rose.remove();
-      }, duration * 1000);
+      setTimeout(() => heart.remove(), duration * 1000);
     }
 
-    // Crear una rosa cada 400ms
-    setInterval(createRose, 400);
+    // Ambiente inicial (poca cantidad)
+    setInterval(() => spawnHeart(), 800);
 
 
-    // --- Lógica del Botón Escurridizo ---
+    // --- LÓGICA DEL BOTÓN NO (EVASIÓN) ---
+    function moveNoBtn() {
+      // 1. Mostrar texto meme flotante
+      skillCheck.textContent = npcPhrases[Math.floor(Math.random() * npcPhrases.length)];
+      skillCheck.classList.remove('visible');
+      void skillCheck.offsetWidth; // Trigger reflow para reiniciar animación
+      skillCheck.classList.add('visible');
 
-    let noBtnAbsolute = false;
-
-    function moveButton() {
-      // Dimensiones actuales
-      const stageRect = stage.getBoundingClientRect();
-      const btnRect = noBtn.getBoundingClientRect();
-      const yesRect = yesBtn.getBoundingClientRect();
-
-      // Si es la primera vez, lo hacemos absoluto
-      if (!noBtnAbsolute) {
-        noBtn.style.position = 'absolute';
-        noBtnAbsolute = true;
+      // 2. Hacerlo absoluto si no lo es
+      if (!noBtn.classList.contains('moving')) {
+        noBtn.classList.add('moving');
+        // Fijar ancho para que no se deforme al moverse
+        noBtn.style.width = noBtn.offsetWidth + 'px'; 
       }
 
-      // Calculamos área disponible (restando tamaño del botón y un margen)
-      const maxLeft = stageRect.width - btnRect.width;
-      const maxTop = stageRect.height - btnRect.height;
+      // 3. Calcular nueva posición (viewport)
+      const btnW = noBtn.offsetWidth;
+      const btnH = noBtn.offsetHeight;
+      const maxW = window.innerWidth - btnW - 20;
+      const maxH = window.innerHeight - btnH - 20;
 
-      let newLeft, newTop;
-      let safe = false;
-      let attempts = 0;
+      const newX = Math.random() * maxW;
+      const newY = Math.random() * maxH;
 
-      // Intentar encontrar una posición que no toque el botón "Sí"
-      while (!safe && attempts < 20) {
-        newLeft = Math.random() * maxLeft;
-        newTop = Math.random() * maxTop;
-
-        // Verificar colisión con el botón YES (coordenadas relativas al stage)
-        const yesLeftRel = yesRect.left - stageRect.left;
-        const yesTopRel = yesRect.top - stageRect.top;
-        
-        // Colisión simple AABB
-        const overlap = !(
-            newLeft + btnRect.width < yesLeftRel - 10 || // A la izquierda
-            newLeft > yesLeftRel + yesRect.width + 10 || // A la derecha
-            newTop + btnRect.height < yesTopRel - 10 ||  // Arriba
-            newTop > yesTopRel + yesRect.height + 10     // Abajo
-        );
-
-        if (!overlap) {
-          safe = true;
-        }
-        attempts++;
-      }
-
-      // Aplicar nueva posición
-      noBtn.style.left = `${newLeft}px`;
-      noBtn.style.top = `${newTop}px`;
-
-      // Cambiar frase
-      const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
-      memeLine.textContent = randomPhrase;
+      noBtn.style.left = Math.max(10, newX) + 'px';
+      noBtn.style.top = Math.max(10, newY) + 'px';
     }
 
-    // Eventos para PC (Mouse)
-    noBtn.addEventListener('mouseover', moveButton);
-
-    // Eventos para Celular (Touch)
-    // Usamos touchstart para que se mueva ANTES de que puedan hacer click
-    noBtn.addEventListener('touchstart', (e) => {
-      e.preventDefault(); // Evita el click
-      moveButton();
-    });
+    // Eventos para esquivar (Mouse y Touch)
+    // 'mouseover' para PC
+    noBtn.addEventListener('mouseover', moveNoBtn);
     
-    // Backup por si hacen click muy rápido
+    // 'touchstart' para Móvil (evita que se pueda clickear)
+    noBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault(); // Cancela el toque
+      moveNoBtn();
+    });
+
+    // 'click' como respaldo final
     noBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      moveButton();
+      moveNoBtn();
     });
 
-    // --- Lógica del Botón Sí ---
+
+    // --- LÓGICA DEL BOTÓN SÍ (LEVEL UP) ---
     yesBtn.addEventListener('click', () => {
-      overlay.classList.add('is-open');
-      // Lluvia masiva de rosas al aceptar
-      setInterval(createRose, 100); 
+      // Reproducir sonido mental de "FUAAAAAA" (Level Up Skyrim)
+      
+      // Explosión de corazones
+      for(let i=0; i<60; i++) {
+        setTimeout(() => spawnHeart(true), i * 30);
+      }
+
+      // Mostrar Overlay
+      overlay.classList.add('visible');
+      
+      // Ocultar botones originales para limpiar vista
+      dialogueBox.style.opacity = '0';
     });
 
   </script>
