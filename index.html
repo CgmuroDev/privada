@@ -481,7 +481,7 @@
 
     @media (max-width: 500px) {
       .card {
-        padding: 36px 24px;
+        padding: 42px 24px;
       }
 
       .corner {
@@ -516,9 +516,26 @@
       }
     }
 
+    @media (max-width: 420px) {
+      .sub {
+        font-size: 1.22rem;
+      }
+
+      .stage {
+        flex-direction: column;
+        height: 176px;
+        gap: 12px;
+        padding: 14px 16px;
+      }
+
+      .btn {
+        width: min(280px, 100%);
+      }
+    }
+
     @media (max-width: 360px) {
       .stage {
-        height: 154px;
+        height: 190px;
         gap: 12px;
       }
 
@@ -554,7 +571,7 @@
       </div>
 
       <div class="tag">Modo confesión: activado</div>
-      <h1 id="titulo">¿Quieres ser mi novia?</h1>
+      <h1 id="titulo">¿Quieres ser mi novia? 🥺</h1>
 
       <div class="divider small" aria-hidden="true">
         <svg viewBox="0 0 120 12" preserveAspectRatio="none">
@@ -880,6 +897,11 @@
         if (evt === 'touchstart') e.preventDefault();
         moveNoSomewhereElse();
       }, { passive: false });
+    });
+
+    noBtn.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      moveNoSomewhereElse();
     });
 
     noBtn.addEventListener('click', (e) => {
