@@ -11,13 +11,13 @@
   <style>
     :root {
       /* Skyrim Palette */
-      --bg-void: #050505;
+      --bg-void: #080808;
       --bg-menu: rgba(20, 20, 20, 0.95);
       --skyrim-gold: #c8aa6e;
       --skyrim-gold-dim: #79663f;
-      --skyrim-white: #dcdcdc;
+      --skyrim-white: #cfcfcf;
       --skyrim-grey: #999;
-      --quest-green: #11ff11; /* Color de misión completada clásico */
+      --quest-green: #11ff11;
       --heart-red: #aa2222;
     }
 
@@ -26,8 +26,7 @@
     body {
       font-family: 'Cinzel', serif;
       background-color: var(--bg-void);
-      background-image: 
-        radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 100%);
+      background-image: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000000 100%);
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -37,6 +36,19 @@
       user-select: none;
     }
 
+    /* --- FONDO DE CONSTELACIÓN (SKILL TREE) --- */
+    .constellation-bg {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 1;
+      opacity: 0.15;
+      pointer-events: none;
+      background-image: 
+        linear-gradient(rgba(200, 170, 110, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200, 170, 110, 0.1) 1px, transparent 1px);
+      background-size: 100px 100px;
+    }
+    
     /* Fondo de niebla animada */
     .fog {
       position: absolute;
@@ -44,96 +56,126 @@
       background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png') repeat-x;
       background-size: contain;
       animation: fogAnim 60s linear infinite;
-      opacity: 0.3;
-      z-index: 0;
+      opacity: 0.2;
+      z-index: 2;
       pointer-events: none;
     }
     @keyframes fogAnim { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
 
-    /* Partículas de Corazones (Nieve romántica) */
+    /* Partículas de Corazones */
     .particle-container {
       position: fixed;
       inset: 0;
       pointer-events: none;
-      z-index: 1;
+      z-index: 3;
     }
     .heart-particle {
       position: absolute;
       color: var(--heart-red);
-      opacity: 0.7;
+      opacity: 0.8;
       animation: floatDown linear forwards;
-      filter: drop-shadow(0 0 5px rgba(200, 50, 50, 0.5));
+      filter: drop-shadow(0 0 5px rgba(200, 50, 50, 0.6));
     }
     @keyframes floatDown {
       to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
     }
 
-    /* Contenedor Principal estilo UI Skyrim */
+    /* --- UI BRÚJULA SKYRIM --- */
+    .compass-bar {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 320px;
+      height: 25px;
+      background: linear-gradient(90deg, transparent, rgba(0,0,0,0.8) 20%, rgba(0,0,0,0.8) 80%, transparent);
+      border-top: 2px solid #444;
+      border-bottom: 2px solid #444;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      z-index: 20;
+      mask-image: linear-gradient(90deg, transparent, black 15%, black 85%, transparent);
+      -webkit-mask-image: linear-gradient(90deg, transparent, black 15%, black 85%, transparent);
+    }
+    .compass-marker {
+      color: var(--skyrim-white);
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+    .compass-objective {
+      color: var(--skyrim-gold); /* Objetivo actual */
+      font-size: 1rem;
+      text-shadow: 0 0 5px var(--skyrim-gold);
+    }
+
+    /* Contenedor Principal */
     .quest-card {
       position: relative;
       z-index: 10;
       width: 90%;
-      max-width: 600px;
+      max-width: 650px;
       text-align: center;
       padding: 40px 20px;
+      /* Sutil fondo oscuro detrás del texto */
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0.6) 0%, transparent 70%);
     }
 
-    /* Misión Iniciada HUD */
+    /* HUD Misión */
     .quest-header {
-      margin-bottom: 30px;
-      position: relative;
+      margin-bottom: 25px;
       display: inline-block;
     }
-    
-    .quest-marker {
-      font-size: 2rem;
+    .quest-marker-icon {
+      font-size: 2.2rem;
       color: var(--skyrim-white);
-      text-shadow: 0 0 10px var(--skyrim-white);
-      animation: pulseMarker 2s infinite;
+      text-shadow: 0 0 8px rgba(255,255,255,0.8);
+      animation: pulseMarker 2.5s infinite ease-in-out;
+      display: block;
       margin-bottom: 5px;
     }
     @keyframes pulseMarker {
-      0% { transform: scale(1); opacity: 0.8; }
-      50% { transform: scale(1.2); opacity: 1; }
-      100% { transform: scale(1); opacity: 0.8; }
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.15); opacity: 1; }
     }
-
-    .quest-title {
+    .quest-title-text {
       font-family: 'Cinzel Decorative', serif;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       letter-spacing: 2px;
       color: var(--skyrim-gold);
-      border-bottom: 2px solid var(--skyrim-gold-dim);
-      padding-bottom: 5px;
-      display: inline-block;
       text-transform: uppercase;
+      border-bottom: 1px solid rgba(200, 170, 110, 0.4);
+      padding-bottom: 4px;
     }
 
-    /* Texto principal */
     h1 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-size: clamp(2.2rem, 5.5vw, 3.8rem);
       font-weight: 400;
-      margin: 20px 0;
-      text-shadow: 2px 2px 0px #000;
+      margin: 15px 0 25px;
+      text-shadow: 0 4px 10px rgba(0,0,0,0.8);
+      line-height: 1.1;
     }
 
     .dialogue-text {
       font-family: 'EB Garamond', serif;
-      font-size: 1.3rem;
-      color: var(--skyrim-grey);
+      font-size: 1.4rem;
+      color: var(--skyrim-white);
+      opacity: 0.9;
       font-style: italic;
-      margin-bottom: 40px;
-      line-height: 1.5;
+      margin-bottom: 45px;
+      line-height: 1.6;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
     }
 
-    /* Opciones de Diálogo */
+    /* Caja de Botones */
     .dialogue-box {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 15px;
+      gap: 18px;
       position: relative;
-      min-height: 150px; /* Espacio para que el NO se mueva */
+      min-height: 160px;
     }
 
     .btn {
@@ -141,77 +183,82 @@
       border: none;
       color: var(--skyrim-grey);
       font-family: 'Cinzel', serif;
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       cursor: pointer;
       position: relative;
-      padding: 10px 40px;
+      padding: 10px 30px;
       transition: all 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
       text-shadow: 1px 1px 2px #000;
-    }
-
-    /* Estilo de selección Skyrim */
-    .btn::before {
-      content: '◆';
-      color: transparent;
-      font-size: 0.8em;
-      margin-right: 10px;
-      transition: color 0.2s;
-    }
-
-    .btn:hover, .btn:active {
-      color: var(--skyrim-gold);
-      transform: scale(1.05);
+      white-space: nowrap;
     }
     
+    /* Icono de selección estilo Skyrim */
+    .btn::before {
+      content: '◆';
+      position: absolute;
+      left: 0;
+      color: transparent;
+      font-size: 0.7em;
+      transition: color 0.2s, transform 0.2s;
+      opacity: 0;
+    }
     .btn:hover::before {
       color: var(--skyrim-gold);
+      opacity: 1;
+      transform: translateX(10px);
+    }
+    
+    .btn:hover, .btn:active {
+      color: var(--skyrim-gold);
+      transform: scale(1.03);
     }
 
-    /* Botón SÍ (Persuasión) */
     .btn-yes {
       font-weight: 700;
-      z-index: 50; /* Siempre encima */
+      z-index: 50; 
     }
-
-    /* Botón NO (Escurridizo) */
     .btn-no {
-      font-size: 1rem;
-      opacity: 0.8;
+      font-size: 1.1rem;
+      opacity: 0.7;
     }
     .btn-no.moving {
       position: absolute;
+      /* Añadimos fondo semitransparente al NO cuando se mueve para que sea legible sobre cualquier cosa */
+      background: rgba(0,0,0,0.6);
+      border-radius: 4px;
+      padding: 8px 15px;
     }
 
-    /* Notificaciones Meme */
+    /* Notificaciones Flotantes (Meme) */
     .skill-check {
       position: absolute;
-      top: -30px;
+      top: -40px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 0.9rem;
-      color: #ff4444;
+      font-size: 1rem;
+      color: #ff5555;
       opacity: 0;
       pointer-events: none;
       white-space: nowrap;
       font-family: 'Cinzel', serif;
+      text-shadow: 0 2px 4px #000;
     }
     .skill-check.visible {
       animation: floatUpFade 1.5s forwards;
     }
     @keyframes floatUpFade {
-      0% { opacity: 1; top: -30px; }
-      100% { opacity: 0; top: -60px; }
+      0% { opacity: 1; top: -40px; }
+      100% { opacity: 0; top: -80px; }
     }
 
-    /* LEVEL UP OVERLAY */
+    /* --- LEVEL UP OVERLAY --- */
     .level-up-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.95);
+      background: rgba(0,0,0,0.95); /* Fondo más sólido */
       z-index: 100;
       display: flex;
       flex-direction: column;
@@ -219,110 +266,132 @@
       align-items: center;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 1s ease;
+      transition: opacity 0.5s ease; /* Transición más rápida */
     }
-
     .level-up-overlay.visible {
       opacity: 1;
       pointer-events: auto;
     }
 
-    .level-up-bar {
+    .level-bar-top, .level-bar-bottom {
       width: 100%;
       height: 2px;
       background: linear-gradient(90deg, transparent, var(--skyrim-gold), transparent);
-      margin: 20px 0;
       transform: scaleX(0);
-      transition: transform 1s 0.5s ease-out;
+      transition: transform 0.8s ease-out; /* Más rápido */
+      margin: 10px 0;
     }
-    .level-up-overlay.visible .level-up-bar {
+    .level-up-overlay.visible .level-bar-top,
+    .level-up-overlay.visible .level-bar-bottom {
       transform: scaleX(1);
     }
 
     .level-up-text {
       font-family: 'Cinzel Decorative', serif;
-      font-size: 4rem;
+      font-size: 3.5rem;
       color: var(--skyrim-gold);
       text-transform: uppercase;
-      margin-bottom: 10px;
-      letter-spacing: 5px;
-      transform: scale(0.8);
+      letter-spacing: 4px;
+      transform: scale(0.9);
       opacity: 0;
-      transition: all 0.5s 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      /* Animación más simple y rápida */
+      transition: all 0.5s ease-out; 
+      text-shadow: 0 0 20px rgba(200, 170, 110, 0.6);
+      text-align: center;
+      margin: 20px 0;
     }
     .level-up-overlay.visible .level-up-text {
       transform: scale(1);
       opacity: 1;
     }
 
-    .skill-text {
-      font-size: 1.5rem;
+    .stat-text {
+      font-size: 1.4rem;
       color: var(--skyrim-white);
       margin-top: 20px;
-    }
-    
-    .couple-emoji {
-      font-size: 5rem;
-      margin: 30px 0;
-      filter: drop-shadow(0 0 20px var(--skyrim-gold));
+      text-shadow: 0 2px 5px #000;
     }
 
-    /* Botón WA final */
+    .couple-emoji {
+      font-size: 6rem;
+      margin: 30px 0;
+      filter: drop-shadow(0 0 25px rgba(200, 170, 110, 0.5));
+      animation: floatEmoji 3s infinite ease-in-out;
+    }
+    @keyframes floatEmoji {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
     .wa-btn {
-      margin-top: 30px;
+      margin-top: 25px;
       background: linear-gradient(to bottom, #1a4a1a, #0d260d);
       border: 1px solid #4a8a4a;
-      color: #fff;
-      padding: 15px 30px;
+      color: #ddd;
+      padding: 15px 35px;
       font-family: 'Cinzel', serif;
       text-decoration: none;
       text-transform: uppercase;
-      letter-spacing: 2px;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
       transition: all 0.3s;
-      box-shadow: 0 0 15px rgba(20, 255, 20, 0.2);
+      box-shadow: 0 0 15px rgba(20, 255, 20, 0.1);
+      position: relative;
+      overflow: hidden;
     }
     .wa-btn:hover {
       background: linear-gradient(to bottom, #266e26, #133a13);
-      box-shadow: 0 0 25px rgba(20, 255, 20, 0.5);
+      box-shadow: 0 0 30px rgba(20, 255, 20, 0.4);
+      color: #fff;
     }
 
-    /* Móvil adjustments */
+    /* Móvil */
     @media (max-width: 500px) {
-      .quest-card { width: 100%; padding: 20px 10px; }
+      .compass-bar { width: 90%; }
       h1 { font-size: 2.2rem; }
-      .dialogue-text { font-size: 1.1rem; }
-      .level-up-text { font-size: 2.5rem; }
-      .btn { font-size: 1.1rem; width: 100%; justify-content: flex-start; padding-left: 20%; }
-      .btn-no.moving { width: auto; padding: 10px 20px; justify-content: center; }
+      .dialogue-text { font-size: 1.2rem; }
+      /* Corrección de centrado en móvil */
+      .btn { font-size: 1.2rem; justify-content: center; padding-left: 0; width: 100%; }
+      .btn:hover::before { display: none; } /* En móvil el hover con flecha puede molestar */
+      .btn-no.moving { justify-content: center; padding: 10px; width: auto; font-size: 1rem; }
+      .level-up-text { font-size: 2.2rem; }
     }
-
   </style>
 </head>
 <body>
 
+  <!-- Fondo: Niebla, Constelación y Partículas -->
   <div class="fog"></div>
+  <div class="constellation-bg"></div>
   <div id="particleContainer" class="particle-container"></div>
 
+  <!-- Brújula Skyrim -->
+  <div class="compass-bar">
+    <div class="compass-marker">Nord</div>
+    <div class="compass-objective">◆</div> <!-- Marcador de misión activa -->
+    <div class="compass-marker">South</div>
+  </div>
+
   <main class="quest-card">
-    <!-- Marcador de Misión -->
+    <!-- Header de Misión -->
     <div class="quest-header">
-      <div class="quest-marker">◆</div>
-      <div class="quest-title">Misión Iniciada: Propuesta de Amor</div>
+      <span class="quest-marker-icon">◆</span>
+      <div class="quest-title-text">Misión Iniciada: Propuesta de Amor</div>
     </div>
 
     <h1>¿Quieres ser mi novia?</h1>
     
     <p class="dialogue-text">
       Prometo risas, aventuras y protegerte de cualquier flecha en la rodilla.<br>
-      ¿Qué dices?
+      ¿Qué dices, Dragonborn?
     </p>
 
     <div class="dialogue-box" id="dialogueBox">
       <!-- Indicador de fallo "Sneak Failed" -->
-      <div id="skillCheck" class="skill-check">Sneak Failed!</div>
+      <div id="skillCheck" class="skill-check"></div>
 
       <button id="yesBtn" class="btn btn-yes">
-        [Persuadir] ¡Sí, acepto! ❤️
+        ¡Sí, acepto! ❤️
       </button>
       
       <button id="noBtn" class="btn btn-no">
@@ -333,21 +402,22 @@
 
   <!-- PANTALLA DE LEVEL UP / ÉXITO -->
   <div id="successOverlay" class="level-up-overlay">
-    <div class="level-up-bar"></div>
+    <div class="level-bar-top"></div>
     <div class="level-up-text">NIVEL SUBIDO</div>
-    <div class="level-up-bar"></div>
+    <div class="level-bar-bottom"></div>
     
-    <div class="skill-text">Relación aumentada a 100</div>
+    <div class="stat-text">Elocuencia aumentada a 100</div>
+    <div class="stat-text" style="font-size: 1rem; color: #888; margin-top: 5px;">Relación Legendaria desbloqueada</div>
     
     <span class="couple-emoji">👩‍❤️‍👨</span>
 
-    <p style="color: #aaa; margin-bottom: 20px; font-style: italic;">
-      Misión Completada: "El inicio de nosotros"
+    <p style="color: #aaa; margin-bottom: 30px; font-style: italic; max-width: 80%; text-align: center;">
+      Nuevo objetivo: Ser felices para siempre.
     </p>
     
     <!-- Enlace a WhatsApp -->
     <a href="https://api.whatsapp.com/send?phone=529981204933&text=¡Dije%20que%20SÍ!%20%5BPersuadir%20Éxito%5D%20👩‍❤️‍👨%20¡Subimos%20de%20nivel!" class="wa-btn" target="_blank">
-      Confirmar Misión
+      Guardar Partida
     </a>
   </div>
 
@@ -369,25 +439,23 @@
       "Do you get to the Cloud District?",
       "¡Por Skyrim!",
       "Error: Speech 0",
-      "No lollygagging!"
+      "No lollygagging!",
+      "Stop right there!"
     ];
 
-    // --- SISTEMA DE PARTÍCULAS (CORAZONES) ---
+    // --- SISTEMA DE PARTÍCULAS ---
     function spawnHeart(isExplosion = false) {
       const heart = document.createElement('div');
       heart.classList.add('heart-particle');
-      heart.textContent = Math.random() > 0.8 ? '✨' : '❤️'; // Corazones y brillos
+      heart.textContent = Math.random() > 0.8 ? '✨' : '❤️'; 
       
-      // Posición aleatoria
       heart.style.left = Math.random() * 100 + 'vw';
       heart.style.top = isExplosion ? '50%' : '-50px';
       
-      // Tamaño variable
       const size = Math.random() * 20 + 10;
       heart.style.fontSize = size + 'px';
       
-      // Velocidad
-      const duration = Math.random() * 3 + 2;
+      const duration = Math.random() * 3 + 3;
       heart.style.animationDuration = duration + 's';
 
       particleContainer.appendChild(heart);
@@ -395,69 +463,61 @@
       setTimeout(() => heart.remove(), duration * 1000);
     }
 
-    // Ambiente inicial (poca cantidad)
+    // Ambiente inicial
     setInterval(() => spawnHeart(), 800);
-
 
     // --- LÓGICA DEL BOTÓN NO (EVASIÓN) ---
     function moveNoBtn() {
-      // 1. Mostrar texto meme flotante
+      // 1. Mostrar texto meme
       skillCheck.textContent = npcPhrases[Math.floor(Math.random() * npcPhrases.length)];
       skillCheck.classList.remove('visible');
-      void skillCheck.offsetWidth; // Trigger reflow para reiniciar animación
+      void skillCheck.offsetWidth; 
       skillCheck.classList.add('visible');
 
-      // 2. Hacerlo absoluto si no lo es
+      // 2. Hacerlo absoluto
       if (!noBtn.classList.contains('moving')) {
         noBtn.classList.add('moving');
-        // Fijar ancho para que no se deforme al moverse
         noBtn.style.width = noBtn.offsetWidth + 'px'; 
       }
 
-      // 3. Calcular nueva posición (viewport)
+      // 3. Calcular posición segura
       const btnW = noBtn.offsetWidth;
       const btnH = noBtn.offsetHeight;
-      const maxW = window.innerWidth - btnW - 20;
-      const maxH = window.innerHeight - btnH - 20;
+      const pad = 20;
 
-      const newX = Math.random() * maxW;
-      const newY = Math.random() * maxH;
+      const maxX = window.innerWidth - btnW - pad;
+      const maxY = window.innerHeight - btnH - pad;
 
-      noBtn.style.left = Math.max(10, newX) + 'px';
-      noBtn.style.top = Math.max(10, newY) + 'px';
+      const newX = Math.max(pad, Math.random() * maxX);
+      const newY = Math.max(pad, Math.random() * maxY);
+
+      noBtn.style.left = newX + 'px';
+      noBtn.style.top = newY + 'px';
     }
 
-    // Eventos para esquivar (Mouse y Touch)
-    // 'mouseover' para PC
     noBtn.addEventListener('mouseover', moveNoBtn);
-    
-    // 'touchstart' para Móvil (evita que se pueda clickear)
-    noBtn.addEventListener('touchstart', (e) => {
-      e.preventDefault(); // Cancela el toque
-      moveNoBtn();
-    });
+    noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNoBtn(); });
+    noBtn.addEventListener('click', (e) => { e.preventDefault(); moveNoBtn(); });
 
-    // 'click' como respaldo final
-    noBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      moveNoBtn();
-    });
-
-
-    // --- LÓGICA DEL BOTÓN SÍ (LEVEL UP) ---
+    // --- LÓGICA DEL BOTÓN SÍ (Secuencia Completa) ---
     yesBtn.addEventListener('click', () => {
-      // Reproducir sonido mental de "FUAAAAAA" (Level Up Skyrim)
-      
-      // Explosión de corazones
-      for(let i=0; i<60; i++) {
-        setTimeout(() => spawnHeart(true), i * 30);
+      // 1. Ocultar botones
+      dialogueBox.style.transition = 'opacity 0.3s';
+      dialogueBox.style.opacity = '0';
+      dialogueBox.style.pointerEvents = 'none';
+
+      // 2. Explosión de corazones inmediata
+      for(let i=0; i<40; i++) {
+        setTimeout(() => spawnHeart(true), i * 50);
       }
 
-      // Mostrar Overlay
-      overlay.classList.add('visible');
-      
-      // Ocultar botones originales para limpiar vista
-      dialogueBox.style.opacity = '0';
+      // 3. Mostrar Level Up Overlay casi de inmediato (sin banner intermedio)
+      setTimeout(() => {
+        overlay.classList.add('visible');
+        
+        // Más corazones
+        setInterval(() => spawnHeart(true), 200);
+      }, 300); 
     });
 
   </script>
