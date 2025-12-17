@@ -39,6 +39,29 @@
       overflow-x: hidden;
     }
 
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 1000px 520px at 20% 15%, rgba(201, 162, 39, 0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 900px 480px at 80% 85%, rgba(201, 162, 39, 0.05) 0%, transparent 62%),
+        linear-gradient(120deg, rgba(10, 12, 15, 0.0) 0%, rgba(201, 162, 39, 0.03) 50%, rgba(10, 12, 15, 0.0) 100%);
+      background-size: 140% 140%, 140% 140%, 220% 220%;
+      background-position: 0% 0%, 100% 100%, 50% 50%;
+      opacity: 0.9;
+      transform: translateZ(0);
+      animation: bg-drift 28s ease-in-out infinite;
+    }
+
+    @keyframes bg-drift {
+      0% { background-position: 0% 0%, 100% 100%, 50% 50%; }
+      50% { background-position: 18% 10%, 82% 90%, 48% 55%; }
+      100% { background-position: 0% 0%, 100% 100%, 50% 50%; }
+    }
+
     /* Dragon silhouettes */
     .dragon {
       position: fixed;
@@ -48,7 +71,7 @@
       background-repeat: no-repeat;
       opacity: 0.04;
       pointer-events: none;
-      z-index: 0;
+      z-index: 1;
     }
 
     .dragon.left {
@@ -71,7 +94,7 @@
       place-items: center;
       padding: 32px 20px;
       position: relative;
-      z-index: 1;
+      z-index: 2;
     }
 
     .card {
@@ -86,18 +109,59 @@
         0 0 80px var(--glow),
         0 25px 60px rgba(0, 0, 0, 0.5),
         inset 0 1px 0 rgba(201, 162, 39, 0.1);
+      isolation: isolate;
+      animation: border-pulse 4.8s ease-in-out infinite;
+    }
+
+    @keyframes border-pulse {
+      0%, 100% {
+        box-shadow: 0 0 80px var(--glow), 0 25px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(201, 162, 39, 0.1);
+      }
+      50% {
+        box-shadow: 0 0 95px rgba(201, 162, 39, 0.20), 0 25px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(201, 162, 39, 0.14);
+      }
+    }
+
+    .card > :not(.romance-layer) {
+      position: relative;
+      z-index: 1;
     }
 
     .card::before {
       content: '';
       position: absolute;
       inset: 12px;
+      z-index: 0;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23c9a227' stroke-width='2' opacity='0.55'%3E%3Cpath d='M36 40c0-6 5-11 11-11 5 0 10 3 13 7 3-4 8-7 13-7 6 0 11 5 11 11 0 14-24 28-24 28S36 54 36 40z'/%3E%3Cpath d='M78 88c0-4 3-7 7-7 3 0 6 2 7 5 2-3 5-5 8-5 4 0 7 3 7 7 0 9-15 17-15 17S78 97 78 88z'/%3E%3Cpath d='M12 90c0-4 3-7 7-7 3 0 6 2 7 5 2-3 5-5 8-5 4 0 7 3 7 7 0 9-15 17-15 17S12 99 12 90z'/%3E%3C/g%3E%3C/svg%3E");
       background-repeat: repeat;
       background-size: 140px 140px;
       opacity: 0.06;
       pointer-events: none;
       border-radius: 4px;
+    }
+
+    .romance-layer {
+      position: absolute;
+      inset: 10px;
+      border-radius: 4px;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.65;
+      background:
+        radial-gradient(circle at 18% 22%, rgba(232, 212, 139, 0.18) 0 2px, transparent 3px),
+        radial-gradient(circle at 78% 28%, rgba(201, 162, 39, 0.14) 0 1.5px, transparent 3px),
+        radial-gradient(circle at 32% 74%, rgba(232, 212, 139, 0.12) 0 1.5px, transparent 3px),
+        radial-gradient(circle at 62% 72%, rgba(201, 162, 39, 0.12) 0 2px, transparent 3px),
+        radial-gradient(circle at 48% 40%, rgba(232, 212, 139, 0.10) 0 1.2px, transparent 3px);
+      transform: translateZ(0);
+      animation: romance-drift 16s ease-in-out infinite;
+      mask-image: radial-gradient(ellipse 70% 60% at 50% 42%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,0.0) 100%);
+    }
+
+    @keyframes romance-drift {
+      0% { background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%; }
+      50% { background-position: 0% 10%, 0% -8%, 0% 8%, 0% -12%, 0% 6%; }
+      100% { background-position: 0% 0%, 0% 0%, 0% 0%, 0% 0%, 0% 0%; }
     }
 
     /* Corner ornaments */
@@ -108,6 +172,7 @@
       border-color: var(--gold);
       border-style: solid;
       opacity: 0.5;
+      z-index: 2;
     }
 
     .corner.tl {
@@ -169,6 +234,16 @@
       line-height: 1.6;
       color: var(--text-muted);
       margin-top: 6px;
+    }
+
+    .meme {
+      min-height: 1.6em;
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+
+    .meme.is-fading {
+      opacity: 0;
+      transform: translateY(2px);
     }
 
     h1 {
@@ -248,7 +323,20 @@
       box-shadow:
         0 0 30px rgba(201, 162, 39, 0.5),
         inset 0 1px 0 rgba(255, 255, 255, 0.3);
-      transform: translateY(-2px);
+    }
+
+    @keyframes heartbeat {
+      0% { transform: translateY(-2px) scale(1); }
+      20% { transform: translateY(-2px) scale(1.06); }
+      40% { transform: translateY(-2px) scale(1); }
+      60% { transform: translateY(-2px) scale(1.05); }
+      100% { transform: translateY(-2px) scale(1); }
+    }
+
+    .btn-yes:hover,
+    .btn-yes:focus-visible,
+    .btn-yes.is-heartbeat {
+      animation: heartbeat 1.15s ease-in-out infinite;
     }
 
     .btn-no {
@@ -350,6 +438,16 @@
       animation: pop 520ms cubic-bezier(.2,.9,.2,1) both;
     }
 
+    .overlay-title.boom {
+      animation: boom 700ms cubic-bezier(.2,.9,.2,1) both;
+    }
+
+    @keyframes boom {
+      0% { transform: scale(0.94); opacity: 0; }
+      40% { transform: scale(1.12); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
     .overlay-subtitle {
       position: relative;
       z-index: 1;
@@ -367,9 +465,17 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
+      body::before,
+      .card,
+      .romance-layer,
       .overlay-panel::before,
-      .overlay-title {
+      .overlay-title,
+      .btn-yes {
         animation: none;
+      }
+
+      .meme {
+        transition: none;
       }
     }
 
@@ -435,6 +541,7 @@
 
   <main class="page">
     <section class="card" aria-labelledby="titulo">
+      <div class="romance-layer" aria-hidden="true"></div>
       <div class="corner tl" aria-hidden="true"></div>
       <div class="corner tr" aria-hidden="true"></div>
       <div class="corner bl" aria-hidden="true"></div>
@@ -466,7 +573,7 @@
         <button id="noBtn" class="btn btn-no" type="button" aria-label="No">No</button>
       </div>
 
-      <p class="hint">PD: el “No” hoy anda tímido… y un poquito rebelde 🙈</p>
+      <p id="memeLine" class="hint meme" aria-live="polite"></p>
 
       <p id="result" class="result" role="status" aria-live="polite"></p>
 
@@ -494,6 +601,7 @@
     const successOverlay = document.getElementById('successOverlay');
     const overlayTitle = document.getElementById('overlayTitle');
     const confettiCanvas = document.getElementById('confetti');
+    const memeLine = document.getElementById('memeLine');
 
     let noIsAbsolute = false;
 
@@ -501,6 +609,35 @@
     let confettiRaf = 0;
     let confettiParticles = [];
     let confettiEndAt = 0;
+
+    const memes = [
+      '“No” no es opción, es decoración ✨',
+      'El “No” se bugueó de amor… perdón 😌',
+      'Si intentas “No”… se te escapa por respeto a tu belleza 💛',
+    ];
+
+    let memeIndex = Math.floor(Math.random() * memes.length);
+    let memeTimer = 0;
+
+    function setMeme(text) {
+      if (!memeLine) return;
+      memeLine.classList.add('is-fading');
+      window.setTimeout(() => {
+        memeLine.textContent = text;
+        memeLine.classList.remove('is-fading');
+      }, prefersReducedMotion ? 0 : 170);
+    }
+
+    function startMemeRotation() {
+      if (!memeLine) return;
+      setMeme(memes[memeIndex]);
+      if (prefersReducedMotion) return;
+      if (memeTimer) window.clearInterval(memeTimer);
+      memeTimer = window.setInterval(() => {
+        memeIndex = (memeIndex + 1) % memes.length;
+        setMeme(memes[memeIndex]);
+      }, 2600);
+    }
 
     function resizeConfettiCanvas() {
       if (!confettiCanvas) return;
@@ -526,9 +663,12 @@
       }
     }
 
-    function startConfetti(durationMs = 2200) {
+    function startConfetti(options = {}) {
       if (prefersReducedMotion) return;
       if (!confettiCanvas) return;
+
+      const durationMs = typeof options === 'number' ? options : (options.durationMs ?? 2200);
+      const density = typeof options === 'object' ? (options.density ?? 1) : 1;
 
       stopConfetti();
       resizeConfettiCanvas();
@@ -538,7 +678,8 @@
       const h = rect.height;
 
       const colors = ['#c9a227', '#e8d48b', '#8b6914', '#d4cfc4'];
-      const count = Math.round(Math.min(160, Math.max(80, (w * h) / 12000)));
+      const base = Math.round(Math.min(160, Math.max(80, (w * h) / 12000)));
+      const count = Math.round(Math.min(280, Math.max(80, base * density)));
 
       const rand = (min, max) => min + Math.random() * (max - min);
       confettiParticles = Array.from({ length: count }, () => {
@@ -603,6 +744,24 @@
 
       confettiRaf = requestAnimationFrame(tick);
     }
+
+    function boomOverlayTitle() {
+      if (!overlayTitle) return;
+      overlayTitle.classList.remove('boom');
+      void overlayTitle.offsetWidth;
+      overlayTitle.classList.add('boom');
+    }
+
+    function pulseYesButton() {
+      if (prefersReducedMotion) return;
+      yesBtn.classList.add('is-heartbeat');
+      window.setTimeout(() => yesBtn.classList.remove('is-heartbeat'), 900);
+    }
+
+    yesBtn.addEventListener('pointerdown', () => {
+      if (yesBtn.disabled) return;
+      pulseYesButton();
+    });
 
     function clamp(value, min, max) {
       return Math.min(max, Math.max(min, value));
@@ -737,7 +896,12 @@
       successOverlay.classList.add('is-open');
       document.body.style.overflow = 'hidden';
 
-      startConfetti();
+      if (navigator.vibrate) {
+        navigator.vibrate([18, 24, 18]);
+      }
+
+      boomOverlayTitle();
+      startConfetti({ durationMs: 1000, density: 2.2 });
 
       yesBtn.disabled = true;
       noBtn.disabled = true;
@@ -754,6 +918,8 @@
       if (successOverlay.hidden) return;
       resizeConfettiCanvas();
     });
+
+    startMemeRotation();
   </script>
 </body>
 </html>
